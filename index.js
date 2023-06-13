@@ -62,18 +62,17 @@ let topMovies = [
 
 app.use(morgan ('common'));
 
-//GET request
-app.get ('/', (req, res) => {
-    res.send('Welcome to myFlix');
-});
-
 // express.static function for the public folder containing the documentation file
-
 app.use(express.static('public'));
 
 app.use((err, req, res, next)=> {
     console.error(err.stack);
     res.status(500).send('Something broke!');
+});
+
+//GET request
+app.get ('/', (req, res) => {
+    res.send('Welcome to myFlix');
 });
 
 app.get('/movies', (req, res) => {

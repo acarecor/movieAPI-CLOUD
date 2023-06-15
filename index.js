@@ -3,7 +3,7 @@ const morgan = require('morgan');
 
 const app = express();
 
-// JSON object with data about 10  top movies 
+// "in memory" array of objects with data about 10  top movies 
 let topMovies = [
     
     {

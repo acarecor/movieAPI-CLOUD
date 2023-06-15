@@ -1,7 +1,16 @@
-const express = require ('express');
-const morgan = require('morgan');
+const express = require ('express'),
+        app = express(),
+        morgan = require ('morgan'),
+        bodyParser = require('body-parser'),
+        uuid = require('uuid');
 
-const app = express();
+app.use(bodyParser.json());
+
+
+
+let users =[
+    
+] 
 
 // "in memory" array of objects with data about 10  top movies 
 let topMovies = [

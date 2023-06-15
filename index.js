@@ -9,13 +9,16 @@ app.use(bodyParser.json());
 
 
 let users =[
-    
-    {   "id":1 ,  
-        "username" : "",
-        "password" : "",
-        "favorites movies" : {
-            "title":"",
-        }
+
+{
+    id:1,
+    name:"Ana",
+    favoritesMovies:[]
+},
+{
+    id:2,
+    name:"Christian",
+    favoritesMovies:["Citizen Kane"]
 }
 
 ] 
@@ -24,19 +27,19 @@ let users =[
 let movies = [
     
     {
-        "Title" :"Citizen Kane",
-        "Genre" :{
-            "Name":"",
-            "Description":"",
+        Title :"Citizen Kane",
+        Genre :{
+            Name:"Drama",
+            Description:"The drama genre features stories with high stakes and many conflicts. They're plot-driven and demand that every character and scene move the story forward. Dramas follow a clearly defined narrative plot structure, portraying real-life scenarios or extreme situations with emotionally-driven characters.",
         },
-        "Description":"",
-        "Director": {
-            "Name":'Orson Welles',
-            "Bio":"",
-            "Birth": "",
+        Description:"When a reporter is assigned to decipher newspaper magnate Charles Foster Kane's (Orson Welles) dying words, his investigation gradually reveals the fascinating portrait of a complex man who rose from obscurity to staggering heights. Though Kane's friend and colleague Jedediah Leland (Joseph Cotten), and his mistress, Susan Alexander (Dorothy Comingore), shed fragments of light on Kane's life, the reporter fears he may never penetrate the mystery of the elusive man's final word, 'Rosebud.'",
+        Director: {
+            Name:'Orson Welles',
+            Bio:"George Orson Welles (May 6, 1915 – October 10, 1985) was an American actor, director, screenwriter, and producer who is remembered for his innovative work in film, radio, and theatre. He is considered to be among the greatest and most influential filmmakers of all time. Kenosha, Wisconsin, U.S.",
+            Birth: "1915",
         },
-        "image Url":"",
-        "year": '1941',
+        image :"",
+        year: '1941',
     },
     {
         title:'Bicycle Thieves',
@@ -102,7 +105,7 @@ app.use((err, req, res, next)=> {
 app.post('/users', (req, res) => {
     const newUser = req.body;
 
-    if(newUser.username){
+    if(newUser.name){
         newUser.id = uuid.v4();
         users.push(newUser);
         res.status(201).json(newUser);
@@ -110,29 +113,56 @@ app.post('/users', (req, res) => {
         const message ='Missing username in request body';
         res.status(400).send(message);
     } 
-});
+})
 
 //USERS----------------------------------------------------------------
 //UPDATE user info
-app.put ('/users/:username', (req, res)=> {
-    res.send('Successful PUT request returning updated user information')
+app.put ('/users/:id', (req, res)=> {
+    const { id } = req.params;
+    const updatedUser = req.body;
+    
+    let user = user.find(user => user.id == id)
+
+    if(user) {
+    user.name = updatedUser.name;
+    res.status(200).json(user)
+    }else {
+        res.status(400).send('user not found');
+    }
 })
 //ADD movie to a list of favorites
-app.put ('/users/:username/:favorites', (req, res)=> {
+app.post ('/users/:id/:movieTitle', (req, res)=> {
+    const { id, movieTitle } = req.params;
+    const favoritesMovies = req.body;
+    
+    let user = user.find(user => user.id == id)
+
+    if(user) {
+    user.favoritesMovies.push(movieTitle);
+    res.status(200).json(user)
+    }else {
+        res.status(400).send('user not found');
+    }
+})
+    
+    
+    
+    
+    
     res.send('Successful PUT request returning the titles from the movie added to favorites')
-});
+})
 
 //DELETE movies from favorites
-app.delete('/users/:username/:favorites', (req, res)=> {
+app.delete('/users/:id/:favoritesMovies', (req, res)=> {
     res.send('Successful DELETE request returning the confirmation of the deleted movie title')
 });
 
-app.delete('/users/:username', (req, res)=> {
+app.delete('/users/:id', (req, res)=> {
     res.send('Successful DELETE request returning a message indicating that the user was removed')
 })
 //READ 
 
-app.get('/users/:username/:favorites', (req, res)=> {
+app.get('/users/:id/:favoritesMovies', (req, res)=> {
     res.send('Succesful GET request returning the list to the favorites movies')
 });
 // movies--------------------------------------
@@ -146,7 +176,7 @@ app.get('/movies', (req, res) => {
 });
 app.get('movies/:title', (req, res)=> {
     const { title } = req.params;
-    const movie = movies.find(movie => movie.Title === title);
+    const movie = movies.find(movie => movies.Title === Title);
 
     if (movie) {
         res.status(200).json(movie);

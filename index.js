@@ -10,15 +10,32 @@ app.use(bodyParser.json());
 
 let users =[
     
+    {   "id": ,  
+        "username" : "",
+        "password" : "",
+        "favorites movies" : {
+            "title":"",
+        }
+}
+
 ] 
 
 // "in memory" array of objects with data about 10  top movies 
 let topMovies = [
     
     {
-        title:'Citizen Kane',
-        director:'Orson Welles',
-        year: '1941',
+        "Title":"Citizen Kane",
+        "Genre":{
+            "Name":"",
+            "Description":"",
+        "Description":"",
+        "Director": {
+            "Name":'Orson Welles',
+            "Bio":"",
+            "Birth": "",
+        },
+        "image Url":"",
+        "year": '1941',
     },
     {
         title:'Bicycle Thieves',
@@ -79,15 +96,60 @@ app.use((err, req, res, next)=> {
     res.status(500).send('Something broke!');
 });
 
-//GET request
+//CREATE a new user
+
+app.post('/users', (req, res) => {
+    const newUser = req.body;
+
+    if(!newUser.username){
+        const message ='Missing username in request body';
+        res.status(400).send(message);
+    } else {
+        newUser.id = uuid.v4();
+        users.push(newUser);
+        res.status(201).send(newUser);
+    }
+});
+
+//UPDATE user info
+app.put ('/users/:username', (req, res)=> {
+    res.send('Successful PUT request returning updated user information')
+})
+//ADD movies to favorites
+app.put ('/users/:username/:favorites', (req, res)=> {
+    res.send('Successful PUT request returning the titles from the movie added to favorites')
+});
+
+//DELETE movies from favorites
+app.delete('/users/:username/:favorites', (req, res)=> {
+    res.send('Successful DELETE request returning the title of the deleted movie')
+});
+
+app.delete('/users/:username', (req, res)=> {
+    res.send('Successful DELETE request returning the message indicating that the user was removed')
+})
+//READ 
+
+app.get('/users/:username/:favorites', (req, res)=> {
+    res.send('Succesful GET request returning the list to the favorites movies')
+});
+
+//GET request READ
 app.get ('/', (req, res) => {
     res.send('Welcome to myFlix');
 });
 
 app.get('/movies', (req, res) => {
-    res.json(topMovies);
+    res.status(200).json(topMovies);
 });
+app.get('movies/:title', (req, res)=> {
+    const { title } = req.params;
+    const movie = movies.find((movie) => movie.Title === title);
 
+    res.json(movie);
+    });
+
+    
 app.listen(8080, () => {
     console.log('Your app is listening on port 8080.');
 });

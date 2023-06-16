@@ -1,16 +1,154 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-    <head>
-        <meta charset="utf-8">
-        <title> DOCUMENTATION</title>
-    </head>
-    <body>
-        <h1>
-         My Flix
-        </h1>
-        <p>
-            MyFlix is a web application that provides users with access to information about different movies, directors and genres. <br>
-            Users can register, update their personal information and create a list of their favorite movies.
-        </p>
-    </body>
+  <head>
+    <meta charset="utf-8" />
+    <title>DOCUMENTATION</title>
+  </head>
+  <body>
+    <h1>My Flix Documentation</h1>
+    <p>
+      MyFlix is a web application that provides users with access to information
+      about different movies, directors and genres. <br />
+      Users can register, update their personal information and create a list of
+      their favorite movies.
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Request</th>
+          <th>URL</th>
+          <th>HTTP Method</th>
+          <th>Query Parameters</th>
+          <th>Request body data format</th>
+          <th>Response body data format</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Allow new users to create an account</td>
+          <td>/users</td>
+          <td>POST</td>
+          <td>none</td>
+          <td>
+            A JSON Object holding data about the user to be added, structured
+            like:<br />
+            {<br />
+            name: "Julian Smith", <br />
+            favoritesMovies: [ "Citizen Kane"]<br />
+            }
+          </td>
+          <td>
+            A JSON object containing data about the user that has been added,
+            including an ID:<br />
+            {<br />
+            id:1,<br />
+            name: "Julian Smith",<br />
+            favoritesMovies: [ "Citizen Kane"]<br />}
+          </td>
+        </tr>
+        <tr>
+          <td>Allow users to update their information (username)</td>
+          <td>/ users/[id]</td>
+          <td>PUT</td>
+          <td>:id</td>
+          <td>
+            A JSON object containing the user's data to be updated like:<br />            
+            {<br />
+                id:1,<br />
+                name: "Jul Smith",<br />
+                favoritesMovies: [ "Citizen Kane"]<br />
+            }<br />
+          </td>
+          <td>
+            A JSON object holding data about the user's updated information like:<br>
+            {<br />
+                id:1,<br />
+                name: "Jul Smith",<br />
+                favoritesMovies: [ "Citizen Kane"]<br />}
+          </td>
+        </tr>
+        <tr>
+          <td>Allow users to add a movie to their favorites list</td>
+          <td>/ users/[id]/[movieTitle]</td>
+          <td>POST</td>
+          <td>:id, :movieTitle</td>
+          <td>none</td>
+          <td>
+            A text message indicating the title of the movie that has been added
+            to favorites.
+          </td>
+        </tr>
+        <tr>
+          <td>Allow users to read the list of their favorite movies</td>
+          <td>/users/[id]/favorites</td>
+          <td>GET</td>
+          <td>:id</td>
+          <td>none</td>
+          <td>
+            a JSON array containing the list of favorite movies from the user.
+          </td>
+        </tr>
+        <tr>
+          <td>Allow users to remove a movie from their favorites list</td>
+          <td>/users/[id]/[movieTitle]</td>
+          <td>DELETE</td>
+          <td>:id, :movieTitle</td>
+          <td>none</td>
+          <td>
+            A text message indicating the name of the movie that has been
+            removed from favorites
+          </td>
+        </tr>
+        <tr>
+          <td>Allow users to delete their account</td>
+          <td>/ users/[id]</td>
+          <td>DELETE</td>
+          <td>:id</td>
+          <td>none</td>
+          <td>
+            A text message indicating that the user's account has been deleted.
+          </td>
+        </tr>
+        <tr>
+          <td>Return a list of All movies to the user</td>
+          <td>/movies</td>
+          <td>GET</td>
+          <td>none</td>
+          <td>none</td>
+          <td>A JSON array of objects containing the informacion of all the movies</td>
+        </tr>
+        <tr>
+          <td>Return data about a single movie by title to the user</td>
+          <td>/movies/[title]</td>
+          <td>GET</td>
+          <td>:title</td>
+          <td>none</td>
+          <td>
+            A JSON object containing information about the requested movie
+          </td>
+        </tr>
+        <tr>
+          <td>Return data about a genre (description) to the user</td>
+          <td>/movies/genre/[genreName]</td>
+          <td>GET</td>
+          <td>:genreName</td>
+          <td>none</td>
+          <td>
+            A JSON object containing information about the requested genre
+          </td>
+        </tr>
+        <tr>
+          <td>Return data about a director (bio , birth year) to the user</td>
+          <td>/movies/director/[directorName]</td>
+          <td>GET</td>
+          <td>:directorName</td>
+          <td>none</td>
+          <td>
+            A JSON object containing information about the requested director
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
 </html>

@@ -36,7 +36,6 @@ let movies = [
             "Bio":"George Orson Welles (May 6, 1915 – October 10, 1985) was an American actor, director, screenwriter, and producer who is remembered for his innovative work in film, radio, and theatre. He is considered to be among the greatest and most influential filmmakers of all time. Kenosha, Wisconsin, U.S.",
             "Birth": "1915"
         },
-        "imageURL" :"",
         "year": "1941",
     },
     {
@@ -112,7 +111,7 @@ app.use((err, req, res, next)=> {
 });
 
 //Users----------------------------------------------------------------
-//CREATE a new user
+//CREATE a new user account
 
 app.post('/users', (req, res) => {
     const newUser = req.body;
@@ -143,22 +142,7 @@ app.put ('/users/:id', (req, res)=> {
     }
 })
 
-//DELETE user
-
-app.delete('/users/:id', (req, res)=> {
-    const { id} = req.params;
-    
-    let user = users.find(user => user.id == id)
-
-    if(user) {
-    users = users.filter(user => user.id == id);
-    res.status(200).send(`user ${id} has been deleted`);
-    } else {
-        res.status(400).send('user not found');
-    }
-})
-
-// User Favorites-------------------------------------------------------------------------------
+    // add a movie to the user Favorites-------------------------------------------------------------------------------
 //CREATE : ADD movie to a list of favorites
 app.post ('/users/:id/:movieTitle', (req, res)=> {
     const { id, movieTitle } = req.params;
@@ -167,13 +151,13 @@ app.post ('/users/:id/:movieTitle', (req, res)=> {
 
     if(user) {
     user.favoritesMovies.push(movieTitle);
-    res.status(200).send(`${movieTitle} has been added to  the user's  ${id}`);
+    res.status(200).send(`${movieTitle} has been added to  the list of favorites movies of user  ${id}`);
     } else {
         res.status(400).send('user not found');
     }
 })
     
-//READ 
+//READ a list of favorites movies
 
 app.get('/users/:id/favorites', (req, res)=> {
     const { id, favoritesMovies } = req.params;
@@ -186,7 +170,7 @@ app.get('/users/:id/favorites', (req, res)=> {
         }
     })
 
-//DELETE movies from favorites
+//DELETE a movie from favorites list
 app.delete('/users/:id/:movieTitle', (req, res)=> {
     
     const { id, movieTitle } = req.params;
@@ -201,12 +185,25 @@ app.delete('/users/:id/:movieTitle', (req, res)=> {
         res.status(400).send('user not found');
     }
 })
+    //-------------------------------------------------------
+
+//DELETE a user account
+
+app.delete('/users/:id', (req, res)=> {
+    const { id} = req.params;
+    
+    let user = users.find(user => user.id == id)
+
+    if(user) {
+    users = users.filter(user => user.id == id);
+    res.status(200).send(`user ${id} has been deleted`);
+    } else {
+        res.status(400).send('user not found');
+    }
+})
 
 // movies---------------------------------------------------------------------------------------
 //READ
-app.get ('/', (req, res) => {
-    res.send('Welcome to myFlix');
-})
 
 app.get('/movies', (req, res) => {
     res.status(200).json(movies);

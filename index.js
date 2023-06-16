@@ -111,7 +111,7 @@ app.use((err, req, res, next)=> {
     res.status(500).send('Something broke!');
 });
 
-//USERS----------------------------------------------------------------
+//Users----------------------------------------------------------------
 //CREATE a new user
 
 app.post('/users', (req, res) => {
@@ -158,7 +158,7 @@ app.delete('/users/:id', (req, res)=> {
     }
 })
 
-
+// User Favorites-------------------------------------------------------------------------------
 //CREATE : ADD movie to a list of favorites
 app.post ('/users/:id/:movieTitle', (req, res)=> {
     const { id, movieTitle } = req.params;
@@ -167,7 +167,7 @@ app.post ('/users/:id/:movieTitle', (req, res)=> {
 
     if(user) {
     user.favoritesMovies.push(movieTitle);
-    res.status(200).send(`${movieTitle} has been added to  the list from the user ${id}`);
+    res.status(200).send(`${movieTitle} has been added to  the user's  ${id}`);
     } else {
         res.status(400).send('user not found');
     }
@@ -175,7 +175,7 @@ app.post ('/users/:id/:movieTitle', (req, res)=> {
     
 //READ 
 
-app.get('/users/:id/:favoritesMovies', (req, res)=> {
+app.get('/users/:id/favorites', (req, res)=> {
     const { id, favoritesMovies } = req.params;
     let user = users.find(user => user.id == id);
 
@@ -196,13 +196,13 @@ app.delete('/users/:id/:movieTitle', (req, res)=> {
 
     if(user) {
     user.favoritesMovies = user.favoritesMovies.filter(title => title !== movieTitle);
-    res.status(200).send(`${movieTitle} has been removed from to user ${id}' list`);
+    res.status(200).send(`${movieTitle} has been removed from to user's ${id} `);
     } else {
         res.status(400).send('user not found');
     }
 })
 
-// movies--------------------------------------
+// movies---------------------------------------------------------------------------------------
 //READ
 app.get ('/', (req, res) => {
     res.send('Welcome to myFlix');
@@ -245,7 +245,7 @@ app.get('/movies/director/:directorName', (req, res)=> {
     }
 })
 
-//------------------------------
+//-----------------------------------------------------------------------------------------
 app.listen(8080, () => {
     console.log('Your app is listening on port 8080.');
 })

@@ -34,7 +34,10 @@
             A JSON Object holding data about the user to be added, structured
             like:<br />
             {<br />
-            name: "Julian Smith", <br />
+            username: "juliansmith", <br />
+            password: "abc123!" <br />
+            email: "julian@mail.com" <br />
+            Birthday: "1999-12-31" <br />
             favoritesMovies: [ "Citizen Kane"]<br />
             }
           </td>
@@ -43,7 +46,10 @@
             including an ID:<br />
             {<br />
             id:1,<br />
-            name: "Julian Smith",<br />
+            username: "Julian Smith",<br />
+            password: "abc123!" <br />
+            email: "julian@mail.com" <br />
+            Birthday: "1999-12-31" <br />
             favoritesMovies: [ "Citizen Kane"]<br />}
           </td>
         </tr>
@@ -53,19 +59,26 @@
           <td>PUT</td>
           <td>:id</td>
           <td>
-            A JSON object containing the user's data to be updated like:<br />            
+            A JSON object containing the user's data to be updated like:<br />
             {<br />
-                id:1,<br />
-                name: "Jul Smith",<br />
-                favoritesMovies: [ "Citizen Kane"]<br />
+            id:1,<br />
+            username: "julsmith",<br />
+            password: "abc123!" <br />
+            email: "julian@mail.com" <br />
+            Birthday: "1999-12-31" <br />
+            favoritesMovies: [ "Citizen Kane"]<br />
             }<br />
           </td>
           <td>
-            A JSON object holding data about the user's updated information like:<br>
+            A JSON object holding data about the user's updated information
+            like:<br />
             {<br />
-                id:1,<br />
-                name: "Jul Smith",<br />
-                favoritesMovies: [ "Citizen Kane"]<br />}
+            id:1,<br />
+            username: "julsmith",<br />
+            password: "abc123!" <br />
+            email: "julian@mail.com" <br />
+            Birthday: "1999-12-31" <br />
+            favoritesMovies: [ "Citizen Kane"]<br />}
           </td>
         </tr>
         <tr>
@@ -116,7 +129,9 @@
           <td>GET</td>
           <td>none</td>
           <td>none</td>
-          <td>A JSON array of objects containing the informacion of all the movies</td>
+          <td>
+            A JSON array of objects containing the informacion of all the movies
+          </td>
         </tr>
         <tr>
           <td>Return data about a single movie by title to the user</td>

@@ -109,18 +109,6 @@ app.post ('/users/:Username/movies/:MovieID', (req, res)=> {
         }
     });
     
-    
-    
-    //const { id, movieTitle } = req.params;
-    
-    //let user = users.find(user => user.id == id);
-
-    //if(user) {
-    //user.favoritesMovies.push(movieTitle);
-    //res.status(200).send(`${movieTitle} has been added to  the list of favorites movies of user  ${id}`);
-    //} else {
-      //  res.status(400).send('user not found');
-    //}
 });
     
 //READ a list of favorites movies

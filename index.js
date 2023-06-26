@@ -113,15 +113,15 @@ app.post ('/users/:Username/movies/:MovieID', (req, res)=> {
     
 //READ a list of favorites movies
 
-app.get('/users/:Username/movies/:MovieID', (req, res)=> {
-    Users.findOne({ Username: req.body.Username}, {FavoritesMovies:req.params.MoviesID} ) 
-    .then ((movies) => {
-    res.status(200).json(movies);
-    })
-    .catch ((err) => {
-        console.error(err);
-        res.status(500).send('Error: ' + err);
-    });
+//app.get('/users/:Username/movies/:MovieID', (req, res)=> {
+ //   Users.findOne({ Username: req.body.Username}, {FavoritesMovies:req.params.MoviesID} ) 
+   // .then ((movies) => {
+    //res.status(200).json(movies);
+    //})
+    //.catch ((err) => {
+      //  console.error(err);
+        //res.status(500).send('Error: ' + err);
+    //});
     //const { id, favoritesMovies } = req.params;
     //let user = users.find(user => user.id == id);
 
@@ -130,7 +130,7 @@ app.get('/users/:Username/movies/:MovieID', (req, res)=> {
        // } else {
          //
         //}
-    });
+   // });
 
 //DELETE a movie from favorites list
 app.delete('/users/:id/:movieTitle', (req, res)=> {
@@ -149,20 +149,23 @@ app.delete('/users/:id/:movieTitle', (req, res)=> {
 })
     //-------------------------------------------------------
 
-//DELETE a user account
+//DELETE a user account (mongoose)
 
-app.delete('/users/:id', (req, res)=> {
-    const { id} = req.params;
-    
-    let user = users.find(user => user.id == id)
+app.delete('/users/:Username', (req, res)=> {
+    Users.findOneAndRemove({ Username:req.params.Username})
+        .then((user) => {
+            if(!user){
+                res.status(400).send(req.params.Username + ' was not found');
+            } else {
+                res.status(200).send (req.params.Username + ' was deleted.');
+            }
+        })
+        .catch ((err) => {
+            console.error(err);
+            res.status(500).send('Error: ' + err);
+        });
 
-    if(user) {
-    users = users.filter(user => user.id == id);
-    res.status(200).send(`user ${id} has been deleted`);
-    } else {
-        res.status(400).send('user not found');
-    }
-})
+});
 
 // movies---------------------------------------------------------------------------------------
 //READ: get all movies (mongoose)

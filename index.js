@@ -209,16 +209,16 @@ app.get('/movies/:Genre.Name', (req, res)=> {
    
    
 //READ: get one  director by name  (mongoose)
-app.get('/movies/director/:directorName', (req, res)=> {
-    const { directorName } = req.params;
-    const director = movies.find(movie => movie.Director.Name === directorName).Director;
-
-    if (director) {
-        res.status(200).json(director);
-    } else {
-        res.status(400).send('director not found')
-    }
-})
+app.get('/movies/:Director.Name', (req, res)=> {
+    Movies.findOne({ Director : req.params.Director.Name})
+    .then ((movie) => {
+        res.json(200).json(movie);
+    })
+    .catch ((err)=> {
+        console.error(err);
+        res.status(500).send('Error: ' + err);
+    });
+});
 
 //-----------------------------------------------------------------------------------------
 app.listen(8080, () => {

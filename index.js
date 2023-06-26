@@ -68,17 +68,28 @@ app.post('/users', (req, res) => {
 app.get('/users', (req, res) => {
     Users.find()
     .then ((users) => {
-    res.status(200).json(users);
+    res.status(201).json(users);
     })
     .catch ((err) => {
         console.error(err);
         res.status(500).send('Error: ' + err);
     });
 });
+//READ get a user by username  (mongoose)
+app.get('/users/:Username', (req,res) => {
+    Users.findOne({Username: req.params.Username})
+        .then((user) => {
+            res.json(user);
+        })
+        .catch ((err)=> {
+            console.error(err);
+            res.status(500).send('Error: ' + err);
+        });
+});
 
 //UPDATE user info (mongoose)
 app.put ('/users/:Username', (req, res)=> {
-    Users.findOneAndUpdate ({Username:req.body.Username}, {$set:
+    Users.findOneAndUpdate ({Username:req.params.Username}, {$set:
         {
             Username: req.body.Username,
             Password:req.body.Password,
@@ -100,8 +111,8 @@ app.put ('/users/:Username', (req, res)=> {
 // add a movie to the user Favorites-------------------------------------------------------------------------------
 //CREATE : ADD movie to a list of favorites (mongoose)
 app.post ('/users/:Username/movies/:MovieID', (req, res)=> {
-    Users.findOneAndUpdate ({ Username: req.body.Username}, {
-        $push: { FavoritesMovies: req.params.MoviesID}
+    Users.findOneAndUpdate ({ Username: req.params.Username}, {
+        $addToSet: { FavoritesMovies: req.params.MovieID}
     },
     {new:true},
     (err,updatedUser)=> {
@@ -118,9 +129,9 @@ app.post ('/users/:Username/movies/:MovieID', (req, res)=> {
 //READ a list of favorites movies
 
 app.get('/users/:Username/FavoritesMovies', (req, res)=> {
-    Users.find({ Username: req.body.Username}, 
+    Users.find({ Username: req.params.Username}, 
         {FavoritesMovies:req.params.MovieID}) 
-     .then ((movies) => {
+    .then ((movies) => {
      res.status(200).json(movies);
     })
     .catch ((err) => {
@@ -130,21 +141,20 @@ app.get('/users/:Username/FavoritesMovies', (req, res)=> {
 });  
 
 //DELETE a movie from favorites list mongoose
-//app.delete('/users/:Username/:MovieID', (req, res)=> {
-  //  Users.findOneAndUpdate ({ Username: req.body.Username}, {
-    //    $pull: { FavoritesMovies: req.params.MoviesID}
-    //},
-    //{new:true},
-    //(err,updatedUser)=> {
-      //  if(err) {
-        //    console.error(err);
-          //  res.status(500).send('Error: ' + err);
-        //} else {
-          //  res.json(updatedUser);
-       // }
-    //});
-    
-//});
+app.delete('/users/:Username/:MovieID', (req, res)=> {
+    Users.findOneAndUpdate ({ Username: req.params.Username}, {
+       $pull: { FavoritesMovies: req.params.MovieID}
+    },
+    {new:true},
+    (err,updatedUser)=> {
+       if(err) {
+            console.error(err);
+            res.status(500).send('Error: ' + err);
+        } else {
+            res.json(updatedUser);
+        }
+    });
+});
   
     //-------------------------------------------------------
 
@@ -177,7 +187,7 @@ app.get('/' , (req, res) => {
 app.get('/movies', (req, res) => {
     Movies.find()
     .then ((movies) => {
-    res.status(200).json(movies);
+        res.status(200).json(movies);
     })
     .catch ((err) => {
         console.error(err);
@@ -199,10 +209,10 @@ app.get('/movies/:Title', (req, res)=> {
 });
 
 //READ: get one  genre by name  (mongoose)
-app.get('/movies/genres/:genreName', (req, res)=> {
-    Movies.find({ 'Genre.Name': req.params.genreName})
+app.get('/movies/genres/:Genre', (req, res)=> {
+    Movies.findOne({ 'Genre.Name': req.params.Genre})
     .then ((movies) => {
-        res.json(200).json(movies);
+        res.json(200).json(movies.Genre);
     })
     .catch ((err)=> {
         console.error(err);
@@ -212,10 +222,10 @@ app.get('/movies/genres/:genreName', (req, res)=> {
    
    
 //READ: get one  director by name  (mongoose)
-app.get('/movies/directors/:directorName', (req, res)=> {
-    Movies.find({ 'Director.Name' : req.params.directorName})
-    .then ((movies) => {
-        res.json(200).json(movies);
+app.get('/movies/directors/:Director', (req, res)=> {
+    Movies.findOne({ 'Director.Name' : req.params.Director})
+    .then ((movie) => {
+        res.json(200).json(movie.Director);
     })
     .catch ((err)=> {
         console.error(err);
@@ -226,5 +236,5 @@ app.get('/movies/directors/:directorName', (req, res)=> {
 //-----------------------------------------------------------------------------------------
 app.listen(8080, () => {
     console.log('Your app is listening on port 8080.');
-});
+})
 

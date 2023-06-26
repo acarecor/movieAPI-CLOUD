@@ -38,7 +38,7 @@ app.post('/users', (req, res) => {
     Users.findOne ({ Username: req.body.Username})
         .then ((user) => {
             if (user) {
-                return res.status(400).send(req.body.Username + 'already exists');
+                return res.status(400).send(req.body.Username + ' already exists');
             } else {
                 Users
                  .create( {
@@ -118,10 +118,10 @@ app.post ('/users/:Username/movies/:MovieID', (req, res)=> {
 //READ a list of favorites movies
 
 app.get('/users/:Username/FavoritesMovies', (req, res)=> {
-    Users.findOne({ Username: req.body.Username}, 
-    {FavoritesMovies:req.params.MoviesID}) 
-     .then ((favoritesmovies) => {
-     res.status(200).json(favoritesmovies);
+    Users.find({ Username: req.body.Username}, 
+        {FavoritesMovies:req.params.MovieID}) 
+     .then ((movies) => {
+     res.status(200).json(movies);
     })
     .catch ((err) => {
         console.error(err);
@@ -129,22 +129,22 @@ app.get('/users/:Username/FavoritesMovies', (req, res)=> {
     });
 });  
 
-//DELETE a movie from favorites list
-app.delete('/users/:Username/:MovieID', (req, res)=> {
-    Users.findOneAndRemove({ FavoritesMovies:req.params.MoviesID})
-    .then((MovieID) => {
-        if(!movies){
-            res.status(400).send(req.params.Username + ' was not found');
-        } else {
-            res.status(200).send (req.params.Username + ' was deleted.');
-        }
-    })
-    .catch ((err) => {
-        console.error(err);
-        res.status(500).send('Error: ' + err);
-    });
-
-});
+//DELETE a movie from favorites list mongoose
+//app.delete('/users/:Username/:MovieID', (req, res)=> {
+  //  Users.findOneAndUpdate ({ Username: req.body.Username}, {
+    //    $pull: { FavoritesMovies: req.params.MoviesID}
+    //},
+    //{new:true},
+    //(err,updatedUser)=> {
+      //  if(err) {
+        //    console.error(err);
+          //  res.status(500).send('Error: ' + err);
+        //} else {
+          //  res.json(updatedUser);
+       // }
+    //});
+    
+//});
   
     //-------------------------------------------------------
 

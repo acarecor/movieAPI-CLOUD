@@ -4,8 +4,6 @@ const express = require ('express'),
         bodyParser = require('body-parser'),
         uuid = require('uuid');
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended:true}));
 
 const mongoose =require ('mongoose');
 const Models = require ('./models.js');
@@ -20,6 +18,8 @@ mongoose.connect('mongodb://localhost:27017/cfDB', {
     useUnifiedTopology:true
 });
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended:true}));
 
 // morgan  function use
 

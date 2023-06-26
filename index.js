@@ -13,6 +13,8 @@ const Models = require ('./models.js');
 const Movies = Models.Movie;
 const Users = Models.User;
 
+
+
 mongoose.connect('mongodb://localhost:27017/cfDB', { 
     useNewUrlParser: true, 
     useUnifiedTopology:true
@@ -23,13 +25,6 @@ mongoose.connect('mongodb://localhost:27017/cfDB', {
 
 app.use(morgan ('common'));
 
-// express.static function for the public folder containing the documentation file
-app.use(express.static('public'));
-
-app.use((err, req, res, next)=> {
-    console.error(err.stack);
-    res.status(500).send('Something broke!');
-});
 
 //Users----------------------------------------------------------------
 //CREATE a new user account add inn JSON format (mongoose)
@@ -75,7 +70,8 @@ app.get('/users', (req, res) => {
         res.status(500).send('Error: ' + err);
     });
 });
-//READ get a user by username  (mongoose)
+
+//READ (get) a user by username  (mongoose)
 app.get('/users/:Username', (req,res) => {
     Users.findOne({Username: req.params.Username})
         .then((user) => {
@@ -126,19 +122,6 @@ app.post ('/users/:Username/movies/:MovieID', (req, res)=> {
     
 });
     
-//READ a list of favorites movies
-
-app.get('/users/:Username/FavoritesMovies', (req, res)=> {
-    Users.find({ Username: req.params.Username}, 
-        {FavoritesMovies:req.params.MovieID}) 
-    .then ((movies) => {
-     res.status(200).json(movies);
-    })
-    .catch ((err) => {
-        console.error(err);
-        res.status(500).send('Error: ' + err);
-    });
-});  
 
 //DELETE a movie from favorites list mongoose
 app.delete('/users/:Username/:MovieID', (req, res)=> {
@@ -210,7 +193,7 @@ app.get('/movies/:Title', (req, res)=> {
 
 //READ: get one  genre by name  (mongoose)
 app.get('/movies/genres/:Genre', (req, res)=> {
-    Movies.findOne({ 'Genre.Name': req.params.Genre})
+  Movies.findOne({ 'Genre.Name': req.params.Genre})
     .then ((movies) => {
         res.json(200).json(movies.Genre);
     })
@@ -231,6 +214,14 @@ app.get('/movies/directors/:Director', (req, res)=> {
         console.error(err);
         res.status(500).send('Error: ' + err);
     });
+});
+
+// express.static function for the public folder containing the documentation file
+app.use('/documentation', express.static('public'));
+
+app.use((err, req, res, next)=> {
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
 });
 
 //-----------------------------------------------------------------------------------------

@@ -113,16 +113,24 @@ app.post ('/users/:Username/movies/:MovieID', (req, res)=> {
     
 //READ a list of favorites movies
 
-app.get('/users/:Username/favorites', (req, res)=> {
-    const { id, favoritesMovies } = req.params;
-    let user = users.find(user => user.id == id);
-
-    if(user) {
-        res.status(200).json(user.favoritesMovies);
-        } else {
-            res.status(400).send('user not found');
-        }
+app.get('/users/:Username/movies/:MovieID', (req, res)=> {
+    Users.findOne({ Username: req.body.Username}, {FavoritesMovies:req.params.MoviesID} ) 
+    .then ((movies) => {
+    res.status(200).json(movies);
     })
+    .catch ((err) => {
+        console.error(err);
+        res.status(500).send('Error: ' + err);
+    });
+    //const { id, favoritesMovies } = req.params;
+    //let user = users.find(user => user.id == id);
+
+    //if(user) {
+      //  res.status(200).json(user.favoritesMovies);
+       // } else {
+         //
+        //}
+    });
 
 //DELETE a movie from favorites list
 app.delete('/users/:id/:movieTitle', (req, res)=> {

@@ -5,8 +5,15 @@ const express = require ('express'),
         uuid = require('uuid');
 
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended:true}));
 
+const mongoose =require ('mongoose');
+const Models = require ('./models.js');
 
+const Movies = Models.Movie;
+const Users = Models.User;
+
+mongoose.connect('mongodb://localhost:27017/cfDB', { useNewUrlParser: true, useUnifiedTopology:true});
 
 let users =[
     {

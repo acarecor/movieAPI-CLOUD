@@ -25,7 +25,11 @@ app.use(bodyParser.urlencoded({extended:true}));
 
 app.use(morgan ('common'));
 
+// default text --------------------------------------------------------------------------------------
 
+app.get('/' , (req, res) => {
+    res.send ("Welcome to myFlix!");
+});
 //Users----------------------------------------------------------------
 //CREATE a new user account add inn JSON format (mongoose)
 
@@ -159,11 +163,6 @@ app.delete('/users/:Username', (req, res)=> {
 
 });
 
-// default text --------------------------------------------------------------------------------------
-
-app.get('/' , (req, res) => {
-    res.send ("Welcome to myFlix!");
-});
 
 // movies-----------------------------------------------------
 //READ: get all movies (mongoose)

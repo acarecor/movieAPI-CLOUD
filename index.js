@@ -125,7 +125,7 @@ app.post ('/users/:Username/movies/:MovieID', (req, res)=> {
     
 //READ a list of favorites movies
 
-app.get('/users/:id/favorites', (req, res)=> {
+app.get('/users/:Username/favorites', (req, res)=> {
     const { id, favoritesMovies } = req.params;
     let user = users.find(user => user.id == id);
 
@@ -195,17 +195,20 @@ app.get('/movies/:Title', (req, res)=> {
         });
 });
 
-app.get('/movies/genre/:genreName', (req, res)=> {
-    const { genreName } = req.params;
-    const genre = movies.find(movie => movie.Genre.Name === genreName).Genre;
-
-    if (genre) {
-        res.status(200).json(genre);
-    } else {
-        res.status(400).send('genre not found')
-    }
-})
-
+//READ: get one  genre by name  (mongoose)
+app.get('/movies/:Genre.Name', (req, res)=> {
+    Movies.findOne({ Genre : req.params.Genre.Name})
+    .then ((movie) => {
+        res.json(200).json(movie);
+    })
+    .catch ((err)=> {
+        console.error(err);
+        res.status(500).send('Error: ' + err);
+    });
+});
+   
+   
+//READ: get one  director by name  (mongoose)
 app.get('/movies/director/:directorName', (req, res)=> {
     const { directorName } = req.params;
     const director = movies.find(movie => movie.Director.Name === directorName).Director;

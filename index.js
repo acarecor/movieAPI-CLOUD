@@ -72,35 +72,56 @@ app.post('/users', (req, res) => {
 });
 
 
-//UPDATE user info
-app.put ('/users/:id', (req, res)=> {
-    const { id } = req.params;
-    const updatedUser = req.body;
-    
-    let user = users.find(user => user.id == id);
-
-    if(user) {
-        user.name = updatedUser.name;
-        res.status(200).json(user);
-    } else {
-        res.status(400).send('User not found');
-    }
-})
+//UPDATE user info (mongoose)
+app.put ('/users/:Username', (req, res)=> {
+    Users.findOneAndUpdate ({Username:req.body.Username}, {$set:
+        {
+            Username: req.body.Username,
+            Password:req.body.Password,
+            Email: req.body.Email,
+            Birthday:req.body.Birthday
+        } 
+    },
+    {new: true},
+    (err, updatedUser)=> {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Error: ' + err);
+        } else {
+            res.json(updatedUser);
+        }
+    });
+});
 
     // add a movie to the user Favorites-------------------------------------------------------------------------------
-//CREATE : ADD movie to a list of favorites
-app.post ('/users/:id/:movieTitle', (req, res)=> {
-    const { id, movieTitle } = req.params;
+//CREATE : ADD movie to a list of favorites (mongoose)
+app.post ('/users/:Username/movies/:MovieID', (req, res)=> {
+    Users.findOneAndUpdate ({ Username: req.body.Username}, {
+        $push: { FavoritesMovies: req.params.MoviesID}
+    },
+    {new:true},
+    (err,updatedUser)=> {
+        if(err) {
+            console.error(err);
+            res.status(500).send('Error: ' + err);
+        } else {
+            res.json(updatedUser);
+        }
+    });
     
-    let user = users.find(user => user.id == id);
+    
+    
+    //const { id, movieTitle } = req.params;
+    
+    //let user = users.find(user => user.id == id);
 
-    if(user) {
-    user.favoritesMovies.push(movieTitle);
-    res.status(200).send(`${movieTitle} has been added to  the list of favorites movies of user  ${id}`);
-    } else {
-        res.status(400).send('user not found');
-    }
-})
+    //if(user) {
+    //user.favoritesMovies.push(movieTitle);
+    //res.status(200).send(`${movieTitle} has been added to  the list of favorites movies of user  ${id}`);
+    //} else {
+      //  res.status(400).send('user not found');
+    //}
+});
     
 //READ a list of favorites movies
 

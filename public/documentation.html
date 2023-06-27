@@ -5,7 +5,7 @@
     <title>DOCUMENTATION</title>
   </head>
   <body>
-    <h1>My Flix Documentation</h1>
+    <h1>MyFlix Movie API Documentation</h1>
     <p>
       MyFlix is a web application that provides users with access to information
       about different movies, directors and genres. <br />
@@ -34,11 +34,11 @@
             A JSON Object holding data about the user to be added, structured
             like:<br />
             {<br />
-            username: "juliansmith", <br />
-            password: "abc123!" <br />
-            email: "julian@mail.com" <br />
-            Birthday: "1999-12-31" <br />
-            favoritesMovies: [ "Citizen Kane"]<br />
+            "Username": "String", <br />
+            "Password": "String!" <br />
+            "Email": "String" <br />
+            "Birthday": "Date" <br />
+            FavoritesMovies: [ MovieID]<br />
             }
           </td>
           <td>
@@ -46,78 +46,56 @@
             including an ID:<br />
             {<br />
             id:1,<br />
-            username: "Julian Smith",<br />
-            password: "abc123!" <br />
-            email: "julian@mail.com" <br />
-            Birthday: "1999-12-31" <br />
-            favoritesMovies: [ "Citizen Kane"]<br />}
+            username: "String",<br />
+            password: "String" <br />
+            email: "String" <br />
+            Birthday: "Date" <br />
+            favoritesMovies: [ MovieID]<br />}
           </td>
         </tr>
         <tr>
-          <td>Allow users to update their information (username)</td>
-          <td>/ users/[id]</td>
+          <td>Allow users to update their information </td>
+          <td>/ users/:Username</td>
           <td>PUT</td>
-          <td>:id</td>
+          <td>:Username</td>
           <td>
             A JSON object containing the user's data to be updated like:<br />
             {<br />
-            id:1,<br />
             username: "julsmith",<br />
-            password: "abc123!" <br />
-            email: "julian@mail.com" <br />
+            password: "abc123!" ,<br />
+            email: "julian@mail.com", <br />
             Birthday: "1999-12-31" <br />
-            favoritesMovies: [ "Citizen Kane"]<br />
             }<br />
           </td>
           <td>
             A JSON object holding data about the user's updated information
-            like:<br />
-            {<br />
-            id:1,<br />
-            username: "julsmith",<br />
-            password: "abc123!" <br />
-            email: "julian@mail.com" <br />
-            Birthday: "1999-12-31" <br />
-            favoritesMovies: [ "Citizen Kane"]<br />}
           </td>
         </tr>
         <tr>
           <td>Allow users to add a movie to their favorites list</td>
-          <td>/ users/[id]/[movieTitle]</td>
+          <td>/ users/:Username/movies/:MovieID</td>
           <td>POST</td>
-          <td>:id, :movieTitle</td>
+          <td>:Username :MovieID</td>
           <td>none</td>
           <td>
-            A text message indicating the title of the movie that has been added
-            to favorites.
-          </td>
-        </tr>
-        <tr>
-          <td>Allow users to read the list of their favorite movies</td>
-          <td>/users/[id]/favorites</td>
-          <td>GET</td>
-          <td>:id</td>
-          <td>none</td>
-          <td>
-            a JSON array containing the list of favorite movies from the user.
+            A JSON object holding data about the user's updated information (MovieID added)
           </td>
         </tr>
         <tr>
           <td>Allow users to remove a movie from their favorites list</td>
-          <td>/users/[id]/[movieTitle]</td>
+          <td>/users/:Username/movies/:MovieID</td>
           <td>DELETE</td>
-          <td>:id, :movieTitle</td>
+          <td>:Username, :MovieID</td>
           <td>none</td>
           <td>
-            A text message indicating the name of the movie that has been
-            removed from favorites
+          A JSON object holding data about the user's updated information (MovieID deleted)
           </td>
         </tr>
         <tr>
           <td>Allow users to delete their account</td>
-          <td>/ users/[id]</td>
+          <td>/ users/:Username</td>
           <td>DELETE</td>
-          <td>:id</td>
+          <td>:Username</td>
           <td>none</td>
           <td>
             A text message indicating that the user's account has been deleted.
@@ -135,9 +113,9 @@
         </tr>
         <tr>
           <td>Return data about a single movie by title to the user</td>
-          <td>/movies/[title]</td>
+          <td>/movies/:Title</td>
           <td>GET</td>
-          <td>:title</td>
+          <td>:Title</td>
           <td>none</td>
           <td>
             A JSON object containing information about the requested movie
@@ -145,7 +123,7 @@
         </tr>
         <tr>
           <td>Return data about a genre (description) to the user</td>
-          <td>/movies/genre/[genreName]</td>
+          <td>/movies/genre/:genreName</td>
           <td>GET</td>
           <td>:genreName</td>
           <td>none</td>
@@ -155,7 +133,7 @@
         </tr>
         <tr>
           <td>Return data about a director (bio , birth year) to the user</td>
-          <td>/movies/director/[directorName]</td>
+          <td>/movies/directors/:directorName</td>
           <td>GET</td>
           <td>:directorName</td>
           <td>none</td>

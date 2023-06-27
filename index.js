@@ -126,7 +126,7 @@ app.post("/users/:Username/movies/:MovieID", (req, res) => {
 });
 
 //DELETE a movie from favorites list mongoose
-app.delete("/users/:Username/:MovieID", (req, res) => {
+app.delete("/users/:Username/movies/:MovieID", (req, res) => {
   Users.findOneAndUpdate(
     { Username: req.params.Username },
     {
@@ -194,8 +194,8 @@ app.get("/movies/:Title", (req, res) => {
 });
 
 //READ: get one  genre by name  (mongoose)
-app.get("/movies/genre/:Name", (req, res) => {
-  Movies.findOne({ "Genre.Name": req.params.Name })
+app.get("/movies/genre/:genreName", (req, res) => {
+  Movies.findOne({ "Genre.Name": req.params.genreName })
     .then((movie) => {
       if (!movie) {
         res.status(400).send("Genre was not found");

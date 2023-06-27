@@ -168,10 +168,10 @@ app.delete('/users/:Username', (req, res)=> {
 //READ: get all movies (mongoose)
 app.get('/movies', (req, res) => {
     Movies.find()
-    .then ((movies) => {
+        .then ((movies) => {
         res.status(200).json(movies);
-    })
-    .catch ((err) => {
+     })
+        .catch ((err) => {
         console.error(err);
         res.status(500).send('Error: ' + err);
     });
@@ -180,10 +180,15 @@ app.get('/movies', (req, res) => {
 //READ: get one  movie by title (mongoose)
 
 app.get('/movies/:Title', (req, res)=> {
-    Movies.findOne({ Title: req.params.Title})
+    Movies.findOne({ 'Title': req.params.Title})
         .then ((movie) => {
-            res.json(200).json(movie);
+            if(!movie){
+                res.status(400).send(req.params.Title + ' was not found');
+            } else {
+                res.status(200).json (movie);
+            }
         })
+         
         .catch ((err)=> {
             console.error(err);
             res.status(500).send('Error: ' + err);
@@ -191,11 +196,14 @@ app.get('/movies/:Title', (req, res)=> {
 });
 
 //READ: get one  genre by name  (mongoose)
-app.get('/movies/genres/:Genre', (req, res)=> {
-  Movies.findOne({ 'Genre.Name': req.params.Genre})
-    .then ((movies) => {
-        res.json(200).json(movies.Genre);
-    })
+app.get('/movies/genre/:Name', (req, res)=> {
+  Movies.findOne({ 'Genre.Name': req.params.Name})
+    .then ((movie) => {
+        if(!movie){
+            res.status(400).send('Genre was not found');
+        } else {
+            res.status(200).json(movie.Genre);
+    }})
     .catch ((err)=> {
         console.error(err);
         res.status(500).send('Error: ' + err);
@@ -204,10 +212,14 @@ app.get('/movies/genres/:Genre', (req, res)=> {
    
    
 //READ: get one  director by name  (mongoose)
-app.get('/movies/directors/:Director', (req, res)=> {
-    Movies.findOne({ 'Director.Name' : req.params.Director})
+app.get('/movies/directors/:directorName', (req, res)=> {
+    Movies.findOne({ 'Director.Name' : req.params.directorName})
     .then ((movie) => {
-        res.json(200).json(movie.Director);
+        if(!movie){
+            res.status(400).send('Director was not found');
+        } else {
+            res.status(200).json(movie.Director);
+        }
     })
     .catch ((err)=> {
         console.error(err);

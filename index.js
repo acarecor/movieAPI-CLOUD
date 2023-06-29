@@ -64,7 +64,7 @@ app.post('/users', (req, res) => {
 });
 
 //READ all users info (mongoose)
-app.get("/users", (req, res) => {
+app.get('/users', (req, res) => {
   Users.find()
     .then((users) => {
       res.status(201).json(users);

@@ -1,6 +1,7 @@
-const jwtSecret = 'your_jwt_secret';
-const jwt = require('jsonwebtoken');
-const passport = require('passport');
+const jwtSecret = 'your_jwt_secret'; 
+const jwt = require('jsonwebtoken'),
+  passport = require('passport');
+
 require('./passport');
 
 /* generateJWTToken function  has an expiration date of 7 days*/
@@ -28,7 +29,7 @@ module.exports = (router) => {
                     res.send(error);
                 }
                 let token = generateJWTToken(user.toJSON());
-                return res.json({user:user, token:token}); /*  keys user:user, token:token must be the same as the values*/
+                return res.json({user, token}); /*  keys user:user, token:token must be the same as the values*/
             });
         }) (req, res);
     });

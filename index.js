@@ -18,6 +18,10 @@ mongoose.connect("mongodb://localhost:27017/cfDB", {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+//importing the auth.js file
+
+ let auth = require ('./auth')(app);
+
 // morgan  function use
 
 app.use(morgan("common"));

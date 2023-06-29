@@ -20,7 +20,7 @@ module.exports = (router) => {
             if(error || !user) {
                 return res.status(400).json({ 
                     message: 'Something is not right',
-                    user:user
+                    user: user
                 });
             }
             req.login(user, {session: false}, (error) => {
@@ -28,7 +28,7 @@ module.exports = (router) => {
                     res.send(error);
                 }
                 let token = generateJWTToken(user.toJSON());
-                return res.json({user, token}); /*  keys user:user, token:token must be the same as the values*/
+                return res.json({user:user, token:token}); /*  keys user:user, token:token must be the same as the values*/
             });
         }) (req, res);
     });

@@ -21,6 +21,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //importing the auth.js file
 
  let auth = require ('./auth')(app);
+ const passport = require ('passport');
+ require('/.passport');
 
 // morgan  function use
 
@@ -168,7 +170,8 @@ app.delete("/users/:Username", (req, res) => {
 
 // movies-----------------------------------------------------
 //READ: get all movies (mongoose)
-app.get("/movies", (req, res) => {
+//  JWT authentication applied as a second parameter between URL and callback function
+app.get("/movies", passport.authenticate('jwt',{session:false}),(req, res) => {
   Movies.find()
     .then((movies) => {
       res.status(200).json(movies);

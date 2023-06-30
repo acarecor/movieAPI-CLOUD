@@ -151,7 +151,8 @@ app.delete('/users/:Username/movies/:MovieID', passport.authenticate('jwt', {ses
 
 //DELETE a user account (mongoose)
 
-app.delete("/users/:Username", (req, res) => {
+app.delete("/users/:Username", passport.authenticate('jwt', {session: false }),
+(req, res) => {
   Users.findOneAndRemove({ Username: req.params.Username })
     .then((user) => {
       if (!user) {
@@ -183,7 +184,8 @@ app.get('/movies', passport.authenticate('jwt', {session: false }),
 
 //READ: get one  movie by title (mongoose)
 
-app.get('/movies/:Title', passport.authenticate('jwt', {session: false }), (req, res) => {
+app.get('/movies/:Title', passport.authenticate('jwt', {session: false }), 
+(req, res) => {
   Movies.findOne({ Title: req.params.Title })
     .then((movie) => {
       if (!movie) {
@@ -200,7 +202,8 @@ app.get('/movies/:Title', passport.authenticate('jwt', {session: false }), (req,
 });
 
 //READ: get one  genre by name  (mongoose)
-app.get('/movies/genre/:genreName', passport.authenticate('jwt', {session: false }),(req, res) => {
+app.get('/movies/genre/:genreName', passport.authenticate('jwt', {session: false }),
+(req, res) => {
   Movies.findOne({ 'Genre.Name': req.params.genreName })
     .then((movie) => {
       if (!movie) {
@@ -216,7 +219,8 @@ app.get('/movies/genre/:genreName', passport.authenticate('jwt', {session: false
 });
 
 //READ: get one  director by name  (mongoose)
-app.get('/movies/directors/:directorName', passport.authenticate('jwt', {session: false }), (req, res) => {
+app.get('/movies/directors/:directorName', passport.authenticate('jwt', {session: false }), 
+(req, res) => {
   Movies.findOne({ 'Director.Name': req.params.directorName })
     .then((movie) => {
       if (!movie) {

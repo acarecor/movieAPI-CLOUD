@@ -45,12 +45,22 @@
             A JSON object containing data about the user that has been added,
             including an ID:<br />
             {<br />
-            id:1,<br />
+            id:" ",<br />
             username: "String",<br />
             password: "String" <br />
             email: "String" <br />
             Birthday: "Date" <br />
             favoritesMovies: [ MovieID]<br />}
+          </td>
+        </tr>
+        <tr>
+          <td>Return information about the user</td>
+          <td>/user/:Username</td>
+          <td>GET</td>
+          <td>none</td>
+          <td>none</td>
+          <td>
+            A JSON array of objects containing the informacion of the user
           </td>
         </tr>
         <tr>
@@ -61,10 +71,10 @@
           <td>
             A JSON object containing the user's data to be updated like:<br />
             {<br />
-            username: "julsmith",<br />
-            password: "abc123!" ,<br />
-            email: "julian@mail.com", <br />
-            Birthday: "1999-12-31" <br />
+            username: "String",<br />
+            password: "String" ,<br />
+            email: "String", <br />
+            Birthday: "Date" <br />
             }<br />
           </td>
           <td>

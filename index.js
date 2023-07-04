@@ -13,6 +13,8 @@ app.use(cors());
 const Movies = Models.Movie;
 const Users = Models.User;
 
+const {check, validationResult} = require('express-validator');
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan('common'));
@@ -38,7 +40,13 @@ app.get('/', (req, res) => {
 //Users----------------------------------------------------------------
 //CREATE a new user account add inn JSON format (mongoose)
 
-app.post('/users', (req, res) => {
+app.post('/users', 
+  [
+    check('Username', 'Username is required').isLength({min:5}),
+    check('Username', 'Username contains non alphanumeric characters - not allowed').isAlphanumeric(),
+    check('Password', 'Password is required').not().isEmpty(),
+    check('Email','Email does not appear to be valid').isEmail()
+  ], (req, res) => {
   let hashedPassword = Users.hashPassword(req.body.Password);
   Users.findOne({ Username: req.body.Username })
     .then((user) => {

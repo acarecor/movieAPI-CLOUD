@@ -7,12 +7,16 @@ const uuid = require('uuid');
 const mongoose = require('mongoose');
 const Models = require('./models.js');
 
+const cors= require('cors');
+app.use(cors());
+
 const Movies = Models.Movie;
 const Users = Models.User;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan('common'));
+
 
 //importing the auth.js file
 

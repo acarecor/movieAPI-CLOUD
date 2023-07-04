@@ -85,9 +85,6 @@ app.post('/users',
     });
 });
 
-//READ all users info (mongoose)
-
-
 //READ (get) a user by username  (mongoose)
 app.get('/users/:Username', passport.authenticate('jwt', {session: false }),
 (req, res) => {

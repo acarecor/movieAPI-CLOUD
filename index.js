@@ -47,7 +47,16 @@ app.post('/users',
     check('Password', 'Password is required').not().isEmpty(),
     check('Email','Email does not appear to be valid').isEmail()
   ], (req, res) => {
+  
+  let errors = validationResult(req);
+  
+  if (!errors.isEmpty()){
+    return res.status(422).json({errors:errors.array()});
+  }
+  
+
   let hashedPassword = Users.hashPassword(req.body.Password);
+  
   Users.findOne({ Username: req.body.Username })
     .then((user) => {
       if (user) {
@@ -77,19 +86,11 @@ app.post('/users',
 });
 
 //READ all users info (mongoose)
-app.get('/users', (req, res) => {
-  Users.find()
-    .then((users) => {
-      res.status(201).json(users);
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send('Error: ' + err);
-    });
-});
+
 
 //READ (get) a user by username  (mongoose)
-app.get('/users/:Username', passport.authenticate('jwt', {session: false }),(req, res) => {
+app.get('/users/:Username', passport.authenticate('jwt', {session: false }),
+(req, res) => {
   Users.findOne({ Username: req.params.Username })
     .then((user) => {
       res.json(user);
@@ -101,13 +102,27 @@ app.get('/users/:Username', passport.authenticate('jwt', {session: false }),(req
 });
 
 //UPDATE user info (mongoose)
-app.put('/users/:Username', passport.authenticate('jwt', {session: false }), (req, res) => {
+app.put('/users/:Username', passport.authenticate('jwt', {session: false }),
+  [ 
+    check('Username', 'Username is required').isLength({min:5}),
+    check('Username', 'Username contains non alphanumeric characters - not allowed').isAlphanumeric(),
+    check('Password', 'Password is required').not().isEmpty(),
+    check('Email','Email does not appear to be valid').isEmail()
+  ], 
+  (req, res) => {
+
+  let errors = validationResult(req);
+    
+  if (!errors.isEmpty()){
+    return res.status(422).json({errors:errors.array()});
+  }
+
   Users.findOneAndUpdate(
     { Username: req.params.Username },
     {
       $set: {
         Username: req.body.Username,
-        Password: req.body.Password,
+        Password: hashedPassword,
         Email: req.body.Email,
         Birthday: req.body.Birthday,
       },
@@ -257,6 +272,7 @@ app.use((err, req, res, next) => {
 });
 
 //-----------------------------------------------------------------------------------------
-app.listen(8080, () => {
-  console.log('Your app is listening on port 8080.');
+const port = process.env.PORT || 8080;
+app.listen(port,'0.0.0.0', () => {
+  console.log('Listening on Port' + port);
 });

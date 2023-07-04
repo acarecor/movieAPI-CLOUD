@@ -26,11 +26,16 @@ let auth = require ('./auth')(app);
 const passport = require ('passport');
 require('./passport');
 
-mongoose.connect('mongodb://localhost:27017/cfDB', {
+//localhost
+//mongoose.connect('mongodb://localhost:27017/cfDB', {
+  //useNewUrlParser: true,
+  //useUnifiedTopology: true,
+//});
+//conecting database atlas
+mongoose.connect('process.env.CONNECTION_URI', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-
 // default text --------------------------------------------------------------------------------------
 
 app.get('/', (req, res) => {

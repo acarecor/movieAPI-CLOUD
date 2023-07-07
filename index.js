@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
-const uuid = require('uuid');
+
 
 const mongoose = require('mongoose');
 const Models = require('./models.js');
@@ -48,10 +48,10 @@ app.get('/', (req, res) => {
 
 app.post('/users', 
   [
-    check('Username', 'Username is required').isLength({min:5}),
-    check('Username', 'Username contains non alphanumeric characters - not allowed').isAlphanumeric(),
-    check('Password', 'Password is required').not().isEmpty(),
-    check('Email','Email does not appear to be valid').isEmail()
+    check('username', 'username is required').isLength({min:5}),
+    check('username', 'username contains non alphanumeric characters - not allowed').isAlphanumeric(),
+    check('password', 'Password is required').not().isEmpty(),
+    check('email','email does not appear to be valid').isEmail()
   ], (req, res) => {
   
   let errors = validationResult(req);
@@ -61,18 +61,18 @@ app.post('/users',
   }
   
 
-  let hashedPassword = Users.hashPassword(req.body.Password);
+  let hashedPassword = Users.hashPassword(req.body.password);
   
-  Users.findOne({ Username: req.body.Username })
+  Users.findOne({ username: req.body.username })
     .then((user) => {
       if (user) {
-        return res.status(400).send(req.body.Username + ' already exists');
+        return res.status(400).send(req.body.username + ' already exists');
       } else {
         Users.create({
-          Username: req.body.Username,
-          Password: hashedPassword,
-          Email: req.body.Email,
-          Birthday: req.body.Birthday,
+          username: req.body.username,
+          password: hashedPassword,
+          email: req.body.email,
+          birthday: req.body.birthday,
         })
           .then((user) => {
             res.status(201).json(user);
@@ -92,9 +92,9 @@ app.post('/users',
 });
 
 //READ (get) a user by username  (mongoose)
-app.get('/users/:Username', passport.authenticate('jwt', {session: false }),
+app.get('/users/:username', passport.authenticate('jwt', {session: false }),
 (req, res) => {
-  Users.findOne({ Username: req.params.Username })
+  Users.findOne({ Username: req.params.username })
     .then((user) => {
       res.json(user);
     })
@@ -105,12 +105,12 @@ app.get('/users/:Username', passport.authenticate('jwt', {session: false }),
 });
 
 //UPDATE user info (mongoose)
-app.put('/users/:Username', passport.authenticate('jwt', {session: false }),
+app.put('/users/:username', passport.authenticate('jwt', {session: false }),
   [ 
-    check('Username', 'Username is required').isLength({min:5}),
-    check('Username', 'Username contains non alphanumeric characters - not allowed').isAlphanumeric(),
-    check('Password', 'Password is required').not().isEmpty(),
-    check('Email','Email does not appear to be valid').isEmail()
+    check('username', 'username is required').isLength({min:5}),
+    check('username', 'username contains non alphanumeric characters - not allowed').isAlphanumeric(),
+    check('password', 'password is required').not().isEmpty(),
+    check('email','email does not appear to be valid').isEmail()
   ], 
   (req, res) => {
 
@@ -122,13 +122,13 @@ app.put('/users/:Username', passport.authenticate('jwt', {session: false }),
   let hashedPassword = Users.hashPassword(req.body.Password);
 
   Users.findOneAndUpdate(
-    { Username: req.params.Username },
+    { username: req.params.Username },
     {
       $set: {
-        Username: req.body.Username,
-        Password: hashedPassword,
-        Email: req.body.Email,
-        Birthday: req.body.Birthday,
+        username: req.body.username,
+        password: hashedPassword,
+        email: req.body.email,
+        birthday: req.body.birthday,
       },
     },
     { new: true }
@@ -144,11 +144,11 @@ app.put('/users/:Username', passport.authenticate('jwt', {session: false }),
 
 // add a movie to the user Favorites-------------------------------------------------------------------------------
 //CREATE : ADD movie to a list of favorites (mongoose)
-app.post('/users/:Username/movies/:MovieID', passport.authenticate('jwt', {session: false }), (req, res) => {
+app.post('/users/:username/movies/:movieId', passport.authenticate('jwt', {session: false }), (req, res) => {
   Users.findOneAndUpdate(
-    { Username: req.params.Username },
+    { username: req.params.username },
     {
-      $addToSet: { FavoritesMovies: req.params.MovieID },
+      $addToSet: { favoritesMovies: req.params.movieId },
     },
     { new: true },
     )
@@ -162,11 +162,11 @@ app.post('/users/:Username/movies/:MovieID', passport.authenticate('jwt', {sessi
 });
 
 //DELETE a movie from favorites list mongoose
-app.delete('/users/:Username/movies/:MovieID', passport.authenticate('jwt', {session: false }),(req, res) => {
+app.delete('/users/:username/movies/:movieId', passport.authenticate('jwt', {session: false }),(req, res) => {
   Users.findOneAndUpdate(
-    { Username: req.params.Username },
+    { username: req.params.username },
     {
-      $pull: { FavoritesMovies: req.params.MovieID },
+      $pull: { favoritesMovies: req.params.movieId },
     },
     { new: true },
     )
@@ -183,14 +183,14 @@ app.delete('/users/:Username/movies/:MovieID', passport.authenticate('jwt', {ses
 
 //DELETE a user account (mongoose)
 
-app.delete("/users/:Username", passport.authenticate('jwt', {session: false }),
+app.delete("/users/:username", passport.authenticate('jwt', {session: false }),
 (req, res) => {
-  Users.findOneAndRemove({ Username: req.params.Username })
+  Users.findOneAndRemove({ username: req.params.username })
     .then((user) => {
       if (!user) {
-        res.status(400).send(req.params.Username + " was not found");
+        res.status(400).send(req.params.username + " was not found");
       } else {
-        res.status(200).send(req.params.Username + " was deleted.");
+        res.status(200).send(req.params._id + " was deleted.");
       }
     })
     .catch((err) => {
@@ -216,12 +216,12 @@ app.get('/movies', passport.authenticate('jwt', {session: false }),
 
 //READ: get one  movie by title (mongoose)
 
-app.get('/movies/:Title', passport.authenticate('jwt', {session: false }), 
+app.get('/movies/:title', passport.authenticate('jwt', {session: false }), 
 (req, res) => {
-  Movies.findOne({ Title: req.params.Title })
+  Movies.findOne({ Title: req.params.title })
     .then((movie) => {
       if (!movie) {
-        res.status(400).send(req.params.Title + ' was not found');
+        res.status(400).send(req.params.title + ' was not found');
       } else {
         res.status(200).json(movie);
       }
@@ -236,12 +236,12 @@ app.get('/movies/:Title', passport.authenticate('jwt', {session: false }),
 //READ: get one  genre by name  (mongoose)
 app.get('/movies/genre/:genreName', passport.authenticate('jwt', {session: false }),
 (req, res) => {
-  Movies.findOne({ 'Genre.Name': req.params.genreName })
+  Movies.findOne({ 'genre.name': req.params.genreName })
     .then((movie) => {
       if (!movie) {
         res.status(400).send('Genre was not found');
       } else {
-        res.status(200).json(movie.Genre);
+        res.status(200).json(movie.genre);
       }
     })
     .catch((err) => {
@@ -253,12 +253,12 @@ app.get('/movies/genre/:genreName', passport.authenticate('jwt', {session: false
 //READ: get one  director by name  (mongoose)
 app.get('/movies/directors/:directorName', passport.authenticate('jwt', {session: false }), 
 (req, res) => {
-  Movies.findOne({ 'Director.Name': req.params.directorName })
+  Movies.findOne({ 'director.name': req.params.directorName })
     .then((movie) => {
       if (!movie) {
         res.status(400).send('Director was not found');
       } else {
-        res.status(200).json(movie.Director);
+        res.status(200).json(movie.director);
       }
     })
     .catch((err) => {

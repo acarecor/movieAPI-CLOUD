@@ -8,11 +8,11 @@ let JWTStrategy = passportJWT.Strategy;
 let ExtractJWT = passportJWT.ExtractJwt;
 
 passport.use(new LocalStrategy ({
-    usernameField: 'Username',
-    passwordField: 'Password'
+    usernameField: 'username',
+    passwordField: 'password'
 }, (username, password, callback) => {
     console.log (username + ' ' + password);
-    Users.findOne({ Username:username}) 
+    Users.findOne({ username:username}) 
       .then((user) => {    
 
         if(!user){
@@ -33,7 +33,7 @@ passport.use(new LocalStrategy ({
 
 passport.use(new JWTStrategy({
     jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-    secretOrKey: 'your_jwt_secret'
+    secretOrKey: process.env.SECRET_OR_KEY
   }, (jwtPayload, callback) => {
     return Users.findById(jwtPayload._id)
       .then((user) => {

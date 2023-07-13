@@ -1,3 +1,4 @@
+require ('dotenv').config();
 const express = require('express');
 const app = express();
 const morgan = require('morgan');
@@ -94,7 +95,7 @@ app.post('/users',
 //READ (get) a user by username  (mongoose)
 app.get('/users/:username', passport.authenticate('jwt', {session: false }),
 (req, res) => {
-  Users.findOne({ Username: req.params.username })
+  Users.findOne({ username: req.params.username })
     .then((user) => {
       res.json(user);
     })
@@ -119,10 +120,10 @@ app.put('/users/:username', passport.authenticate('jwt', {session: false }),
   if (!errors.isEmpty()){
     return res.status(422).json({errors:errors.array()});
   }
-  let hashedPassword = Users.hashPassword(req.body.Password);
+  let hashedPassword = Users.hashPassword(req.body.password);
 
   Users.findOneAndUpdate(
-    { username: req.params.Username },
+    { username: req.params.username },
     {
       $set: {
         username: req.body.username,

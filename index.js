@@ -237,7 +237,7 @@ app.get('/movies/:title', passport.authenticate('jwt', {session: false }),
 //READ: get one  genre by name  (mongoose)
 app.get('/movies/genre/:genreName', passport.authenticate('jwt', {session: false }),
 (req, res) => {
-  Movies.findOne({ "Genre.Name" : req.params.genreName })
+  Movies.findOne({ Genre.Name : req.params.genreName })
     .then((movie) => {
       if (!movie) {
         res.status(400).send('Genre was not found');
@@ -254,7 +254,7 @@ app.get('/movies/genre/:genreName', passport.authenticate('jwt', {session: false
 //READ: get one  director by name  (mongoose)
 app.get('/movies/directors/:directorName', passport.authenticate('jwt', {session: false }), 
 (req, res) => {
-  Movies.findOne({ "Director.Name": req.params.directorName })
+  Movies.findOne({ Director.Name: req.params.directorName })
     .then((movie) => {
       if (!movie) {
         res.status(400).send('Director was not found');

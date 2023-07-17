@@ -41,7 +41,7 @@ mongoose.connect(process.env.CONNECTION_URI, {
 // default text --------------------------------------------------------------------------------------
 
 app.get('/', (req, res) => {
-  res.send('Welcome to myFlix!');
+  res.send("welcome to myFlix!");
 });
 
 //Users----------------------------------------------------------------

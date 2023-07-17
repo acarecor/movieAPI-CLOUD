@@ -203,7 +203,7 @@ app.delete("/users/:username", passport.authenticate('jwt', {session: false }),
 // movies-----------------------------------------------------
 //READ: get all movies (mongoose)
 //  JWT authentication applied as a second parameter between URL and callback function
-app.get('/movies', passport.authenticate('jwt', {session: false }),
+app.get('/movies', 
 (req, res) => {
   Movies.find()
     .then((movies) => {
@@ -217,7 +217,7 @@ app.get('/movies', passport.authenticate('jwt', {session: false }),
 
 //READ: get one  movie by title (mongoose)
 
-app.get('/movies/:title', passport.authenticate('jwt', {session: false }), 
+app.get('/movies/:title',  
 (req, res) => {
   Movies.findOne({ Title: req.params.title })
     .then((movie) => {
@@ -235,7 +235,7 @@ app.get('/movies/:title', passport.authenticate('jwt', {session: false }),
 });
 
 //READ: get one  genre by name  (mongoose)
-app.get('/movies/genre/:genreName', passport.authenticate('jwt', {session: false }),
+app.get('/movies/genre/:genreName',
 (req, res) => {
   Movies.findOne({ 'Genre.Name' : req.params.genreName })
     .then((movie) => {
@@ -252,7 +252,7 @@ app.get('/movies/genre/:genreName', passport.authenticate('jwt', {session: false
 });
 
 //READ: get one  director by name  (mongoose)
-app.get('/movies/directors/:directorName', passport.authenticate('jwt', {session: false }), 
+app.get('/movies/directors/:directorName', 
 (req, res) => {
   Movies.findOne({ 'Director.Name': req.params.directorName })
     .then((movie) => {

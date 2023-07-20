@@ -203,7 +203,7 @@ app.delete("/users/:username", passport.authenticate('jwt', {session: false }),
 // movies-----------------------------------------------------
 //READ: get all movies (mongoose)
 //  JWT authentication applied as a second parameter between URL and callback function
-app.get('/movies', 
+app.get('/movies',  passport.authenticate('jwt', {session: false }),
 (req, res) => {
   Movies.find()
     .then((movies) => {

@@ -12,7 +12,7 @@ const cors= require('cors');
 //added allowed Origins 
 //app.use(cors());
 
-let allowedOrigins = [ 'http://localhost:8080', 'http://localhost:1234', 'https://myflix-cineflix.netlify.app'];
+let allowedOrigins = [ 'http://localhost:8080', 'http://localhost:1234','http://localhost:4200', 'https://myflix-cineflix.netlify.app'];
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin) return callback(null, true);

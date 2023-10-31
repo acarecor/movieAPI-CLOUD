@@ -34,11 +34,10 @@
             A JSON Object holding data about the user to be added, structured
             like:<br />
             {<br />
-            "Username": "String", <br />
-            "Password": "String!" <br />
-            "Email": "String" <br />
-            "Birthday": "Date" <br />
-            FavoritesMovies: [ MovieID]<br />
+            "username": "string", <br />
+            "password": "string" <br />
+            "email": "string" <br />
+            "birthday": "date" <br />
             }
           </td>
           <td>
@@ -46,16 +45,16 @@
             including an ID:<br />
             {<br />
             id:" ",<br />
-            username: "String",<br />
-            password: "String" <br />
-            email: "String" <br />
-            Birthday: "Date" <br />
-            favoritesMovies: [ MovieID]<br />}
+            username: "string",<br />
+            password: "string" <br />
+            email: "string" <br />
+            birthday: "date" <br />
+            favoritesMovies: [movieId]<br />}
           </td>
         </tr>
         <tr>
           <td>Return information about the user</td>
-          <td>/user/:Username</td>
+          <td>/user/:username</td>
           <td>GET</td>
           <td>none</td>
           <td>none</td>
@@ -65,16 +64,16 @@
         </tr>
         <tr>
           <td>Allow users to update their information </td>
-          <td>/ users/:Username</td>
+          <td>/ users/:username</td>
           <td>PUT</td>
-          <td>:Username</td>
+          <td>:username</td>
           <td>
             A JSON object containing the user's data to be updated like:<br />
             {<br />
-            username: "String",<br />
-            password: "String" ,<br />
-            email: "String", <br />
-            Birthday: "Date" <br />
+            username: "string",<br />
+            password: "string" ,<br />
+            email: "string", <br />
+            birthday: "date" <br />
             }<br />
           </td>
           <td>
@@ -83,9 +82,9 @@
         </tr>
         <tr>
           <td>Allow users to add a movie to their favorites list</td>
-          <td>/ users/:Username/movies/:MovieID</td>
+          <td>/ users/:username/movies/:movieId</td>
           <td>POST</td>
-          <td>:Username :MovieID</td>
+          <td>:username :movieId</td>
           <td>none</td>
           <td>
             A JSON object holding data about the user's updated information (MovieID added)
@@ -93,9 +92,9 @@
         </tr>
         <tr>
           <td>Allow users to remove a movie from their favorites list</td>
-          <td>/users/:Username/movies/:MovieID</td>
+          <td>/users/:username/movies/:movieId</td>
           <td>DELETE</td>
-          <td>:Username, :MovieID</td>
+          <td>:username, :movieId</td>
           <td>none</td>
           <td>
           A JSON object holding data about the user's updated information (MovieID deleted)
@@ -103,9 +102,9 @@
         </tr>
         <tr>
           <td>Allow users to delete their account</td>
-          <td>/ users/:Username</td>
+          <td>/ users/:username</td>
           <td>DELETE</td>
-          <td>:Username</td>
+          <td>:username</td>
           <td>none</td>
           <td>
             A text message indicating that the user's account has been deleted.
@@ -123,9 +122,9 @@
         </tr>
         <tr>
           <td>Return data about a single movie by title to the user</td>
-          <td>/movies/:Title</td>
+          <td>/movies/:title</td>
           <td>GET</td>
-          <td>:Title</td>
+          <td>:title</td>
           <td>none</td>
           <td>
             A JSON object containing information about the requested movie

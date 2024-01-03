@@ -416,10 +416,13 @@ app.get('/movies/directors/:directorName', passport.authenticate('jwt', {session
     });
 });
 
+//////////////////////////////////////////////////////////
+/////////////////////AWS SDK//////////////////////////////
+
 // Endpoint  to list objects in the image bucket
 app.get('/images', passport.authenticate('jwt', { session: false }), (req, res) => {
   const listObjectsParams = {
-      Bucket: 'my-cool-local-bucket', // Replace 
+      Bucket: process.env.BUCKET_NAME, // Replace 
   };
 
   const listObjectsCmd = new ListObjectsV2Command(listObjectsParams);
@@ -446,7 +449,7 @@ app.post('/images', passport.authenticate('jwt', { session: false }), (req, res)
       }
 
       const uploadParams = {
-          Bucket: 'my-cool-local-bucket', // Replace with the name of the bucket S3
+          Bucket: process.env.BUCKET_NAME, // Replace with the name of the bucket S3
           Key: fileName,
           Body: fs.readFileSync(tempPath),
       };
@@ -465,6 +468,30 @@ app.post('/images', passport.authenticate('jwt', { session: false }), (req, res)
           });
   });
 });
+
+// Endpoint to retrieve an object from S3
+app.get('/images/:objectKey', passport.authenticate('jwt', { session: false }), (req, res) => {
+  const objectKey = req.params.objectKey;
+  const bucketName = process.env.BUCKET_NAME; // Replace with the name of the bucket S3
+
+  const getObjectParams = {
+      Bucket: bucketName,
+      Key: objectKey,
+  };
+
+  const getObjectCmd = new GetObjectCommand(getObjectParams);
+
+  s3Client.send(getObjectCmd)
+      .then(({ Body }) => {
+          res.send(Body);
+      })
+      .catch((error) => {
+          console.error(error);
+          res.status(500).json({ error: 'Error to retrieve an object from S3' });
+      });
+});
+
+//////////////////////////////////////////////////////////////////////////
 
 /**
  * express.static function for the public folder containing the documentation file

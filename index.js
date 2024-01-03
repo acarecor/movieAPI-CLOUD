@@ -434,7 +434,37 @@ app.get('/images', passport.authenticate('jwt', { session: false }), (req, res) 
       });
 });
 
+// Endpoint to upload images to S3
+app.post('/images', passport.authenticate('jwt', { session: false }), (req, res) => {
+  const file = req.files.image;
+  const fileName = req.files.image.name;
+  const tempPath = `./uploads/${fileName}`;
 
+  file.mv(tempPath, (err) => {
+      if (err) {
+          return res.status(500).json({ error: 'Error saving the file' });
+      }
+
+      const uploadParams = {
+          Bucket: 'my-cool-local-bucket', // Replace with the name of the bucket S3
+          Key: fileName,
+          Body: fs.readFileSync(tempPath),
+      };
+
+      const putObjectCmd = new PutObjectCommand(uploadParams);
+
+      s3Client.send(putObjectCmd)
+          .then((uploadResponse) => {
+              // Delete the file from the temporary path 
+              fs.unlinkSync(tempPath);
+              res.json({ success: true, data: uploadResponse });
+          })
+          .catch((error) => {
+              console.error(error);
+              res.status(500).json({ error: 'Error uploading the file to S3' });
+          });
+  });
+});
 
 /**
  * express.static function for the public folder containing the documentation file

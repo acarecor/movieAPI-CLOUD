@@ -9,6 +9,10 @@ const express = require('express');
 const app = express();
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
+//added new code for the aws sdk
+const fileUpload = require ('express-fileupload');
+const { S3 } = require('@aws-sdk/client-s3');
+const fs = require('fs');
 
 
 const mongoose = require('mongoose');
@@ -50,7 +54,7 @@ require('./passport');
 
 
 /**
- * Connection to atlas database
+ * Connection to mongoDB ec2 instance
  */
 mongoose.connect(process.env.CONNECTION_URI, {
   useNewUrlParser: true,
@@ -62,7 +66,7 @@ mongoose.connect(process.env.CONNECTION_URI, {
  */ 
  
 app.get('/', (req, res) => {
-  res.send("welcome to myFlix!");
+  res.send("welcome to myFlix, in the Cloud!");
 });
 
 /**
@@ -91,6 +95,14 @@ app.get('/', (req, res) => {
  *   }
  *  ]
 */
+
+const s3Client = new S3Client({
+  region: 'us-east-1', // Replace with the region aws 
+  endpoint: 'http://localhost:4566', 
+  forcePathStyle: true
+});
+
+
 app.post('/users', 
   [
     check('username', 'username is required').isLength({min:5}),
@@ -403,6 +415,27 @@ app.get('/movies/directors/:directorName', passport.authenticate('jwt', {session
       res.status(500).send('Error: ' + err);
     });
 });
+
+// Endpoint  to list objects in the image bucket
+app.get('/images', passport.authenticate('jwt', { session: false }), (req, res) => {
+  const listObjectsParams = {
+      Bucket: 'my-cool-local-bucket', // Replace 
+  };
+
+  const listObjectsCmd = new ListObjectsV2Command(listObjectsParams);
+
+  s3Client.send(listObjectsCmd)
+      .then((listObjectsResponse) => {
+          res.json(listObjectsResponse.Contents);
+      })
+      .catch((error) => {
+          console.error(error);
+          res.status(500).json({ error: 'Error listing objects in S3' });
+      });
+});
+
+
+
 /**
  * express.static function for the public folder containing the documentation file
  */

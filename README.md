@@ -1,8 +1,8 @@
-## MyFlix Rest API
+## Movie Rest API
 
 # Objective
 
-MyFlix is a web application that provides users with access to information about different movies, directors and genres.
+Cineflix is a web application that provides users with access to information about different movies, directors and genres.
 Users can register, update their personal information and create a list of their favorite movies.
 
 The database was built using MongoDB and and the business logic was modeled using Mongoose
@@ -26,6 +26,4 @@ The database was built using MongoDB and and the business logic was modeled usin
 * Express
 * HTML
 
-In the following link you can see the application:
 
-(https://myflix-movies-2a93844126ef.herokuapp.com)

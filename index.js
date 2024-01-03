@@ -11,7 +11,7 @@ const morgan = require('morgan');
 const bodyParser = require('body-parser');
 //added new code for the aws sdk
 const fileUpload = require ('express-fileupload');
-const { S3 } = require('@aws-sdk/client-s3');
+const { S3Client, ListObjectsV2Command, PutObjectCommand  } = require('@aws-sdk/client-s3');
 const fs = require('fs');
 
 

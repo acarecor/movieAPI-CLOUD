@@ -23,7 +23,7 @@ const cors= require('cors');
 /**  
 * added allowed Origins
 */
-let allowedOrigins = [ 'http://localhost:8080', 'http://localhost:1234','http://localhost:4200'];
+let allowedOrigins = [ 'http://localhost:8080', 'http://localhost:1234','http://localhost:4200','http://cineflix-app.s3-website.eu-central-1.amazonaws.com'];
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin) return callback(null, true);

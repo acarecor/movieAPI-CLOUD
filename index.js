@@ -11,7 +11,7 @@ const morgan = require('morgan');
 const bodyParser = require('body-parser');
 //added new code for the aws sdk
 const fileUpload = require ('express-fileupload');
-const { S3Client, ListObjectsV2Command, PutObjectCommand  } = require('@aws-sdk/client-s3');
+const { S3Client, ListObjectsV2Command, PutObjectCommand, GetObjectCommand } = require('@aws-sdk/client-s3');
 const fs = require('fs');
 
 
@@ -44,6 +44,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan('common'));
 
+//added fileUpload
+app.use(fileUpload({
+  useTempFiles : true ,
+}));
 
 /** 
  * importing the auth.js file
@@ -429,7 +433,8 @@ app.get('/images', passport.authenticate('jwt', { session: false }), (req, res) 
 
   s3Client.send(listObjectsCmd)
       .then((listObjectsResponse) => {
-          res.json(listObjectsResponse.Contents);
+         // res.json(listObjectsResponse.Contents);
+         res.send(listObjectsResponse)
       })
       .catch((error) => {
           console.error(error);
@@ -449,7 +454,7 @@ app.post('/images', passport.authenticate('jwt', { session: false }), (req, res)
       }
 
       const uploadParams = {
-          Bucket: process.env.BUCKET_NAME, // Replace with the name of the bucket S3
+          Bucket: process.env.BUCKET_NAME, 
           Key: fileName,
           Body: fs.readFileSync(tempPath),
       };

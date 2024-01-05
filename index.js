@@ -97,9 +97,9 @@ app.get('/', (req, res) => {
 */
 
 const s3Client = new S3Client({
-  region: 'us-east-1', // Replace with the region aws 
-  endpoint: 'http://localhost:4566', 
-  forcePathStyle: true
+  region: 'eu-central-1', // Replace with the region aws 
+  //endpoint: 'http://localhost:4566', 
+  //forcePathStyle: true
 });
 
 

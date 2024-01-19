@@ -44,10 +44,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan('common'));
 
-//added fileUpload
-app.use(fileUpload({
-  useTempFiles : true ,
-}));
 
 /** 
  * importing the auth.js file
@@ -99,12 +95,6 @@ app.get('/', (req, res) => {
  *   }
  *  ]
 */
-
-const s3Client = new S3Client({
-  region: 'eu-central-1', // Replace with the region aws 
-  //endpoint: 'http://localhost:4566', 
-  //forcePathStyle: true
-});
 
 
 app.post('/users', 
@@ -422,79 +412,160 @@ app.get('/movies/directors/:directorName', passport.authenticate('jwt', {session
 
 //////////////////////////////////////////////////////////
 /////////////////////AWS SDK//////////////////////////////
+const s3Client = new S3Client({
+  region: "eu-central-1", 
+});
 
-// Endpoint  to list objects in the image bucket
-app.get('/images', passport.authenticate('jwt', { session: false }), (req, res) => {
-  const listObjectsParams = {
-      Bucket: process.env.BUCKET_NAME, // Replace 
-  };
+//added fileUpload
+app.use(
+  fileUpload({
+    useTempFiles: true,
+    tempFileDir: "./uploads",
+  })
+);
 
-  const listObjectsCmd = new ListObjectsV2Command(listObjectsParams);
+// Endpoint  to list objects form the s3 bucket (resized images )
+app.get("/images", async (req, res) => {
+  try {
+    const listObjectsParams = {
+      Bucket: process.env.OUTPUT_BUCKET, //bucket name resize
+    };
 
-  s3Client.send(listObjectsCmd)
-      .then((listObjectsResponse) => {
-         // res.json(listObjectsResponse.Contents);
-         res.send(listObjectsResponse)
+    const listObjectsCommand = new ListObjectsV2Command(listObjectsParams);
+    const listObjectsResponse = await s3Client.send(listObjectsCommand);
+
+    const imageDetails = await Promise.all(
+      listObjectsResponse.Contents.map(async (object) => {
+        const params = {
+          Bucket: process.env.OUTPUT_BUCKET, //bucket name resize
+          Key: object.Key,
+        };
+
+        const getObjectCommand = new GetObjectCommand(params);
+        const getObjectResponse = await s3Client.send(getObjectCommand);
+
+        const chunks = [];
+        getObjectResponse.Body.on("data", (chunk) => {
+          chunks.push(chunk);
+        });
+
+        return new Promise((resolve) => {
+          getObjectResponse.Body.on("end", () => {
+            const dataBuffer = Buffer.concat(chunks);
+            const contentType = getObjectResponse.ContentType;
+
+            resolve({
+              name: object.Key,
+              content: dataBuffer.toString("base64"), // Devolver el contenido en base64
+              contentType,
+            });
+          });
+        });
       })
-      .catch((error) => {
-          console.error(error);
-          res.status(500).json({ error: 'Error listing objects in S3' });
-      });
+    );
+
+    res.status(200).json(imageDetails);
+  } catch (err) {
+    console.error("Error retrieving S3 objects:", err);
+    return res.status(500).json({ error: "Error retrieving objects" });
+  }
+});
+
+//Endpoint to fetch images from s3 bucket (original size)
+app.get("/images/:objectKey", async (req, res) => {
+  const objectKey = req.params.objectKey;
+  try {
+    const params = {
+      Bucket: process.env.BUCKET_NAME, //bucket name original
+      Key: objectKey,
+    };
+
+    const getObjectCommand = new GetObjectCommand(params);
+    const getObjectResponse = await s3Client.send(getObjectCommand);
+
+    const chunks = [];
+    getObjectResponse.Body.on("data", (chunk) => {
+      chunks.push(chunk);
+    });
+    // console.log('GetObjectResponse: ', getObjectResponse);
+
+    getObjectResponse.Body.on("end", () => {
+      const dataBuffer = Buffer.concat(chunks);
+      const contentType = getObjectResponse.ContentType;
+      res.setHeader("Content-Type", contentType);
+      res.setHeader("Content-Disposition", `attachment; filename=${objectKey}`);
+      res.send(dataBuffer);
+    });
+  } catch (err) {
+    console.error("Error retrieving S3 object:", err);
+    return res.status(500).json({ error: "Error retrieving object" });
+  }
 });
 
 // Endpoint to upload images to S3
-app.post('/images', passport.authenticate('jwt', { session: false }), (req, res) => {
-  const file = req.files.image;
-  const fileName = req.files.image.name;
-  const tempPath = `./uploads/${fileName}`;
 
-  file.mv(tempPath, (err) => {
-      if (err) {
-          return res.status(500).json({ error: 'Error saving the file' });
-      }
+app.post("/images", async (req, res) => {
+  if (!req.files || Object.keys(req.files).length === 0) {
+    return res.status(400).json({ error: "No files were uploaded." });
+  }
 
-      const uploadParams = {
-          Bucket: process.env.BUCKET_NAME, 
-          Key: fileName,
-          Body: fs.readFileSync(tempPath),
-      };
+  try {
+    // Log the uploaded file information
+    console.log(req.files.file);
 
-      const putObjectCmd = new PutObjectCommand(uploadParams);
+    // Create a readable stream from the temporary file path
+    const stream = fs.createReadStream(req.files.file.tempFilePath);
 
-      s3Client.send(putObjectCmd)
-          .then((uploadResponse) => {
-              // Delete the file from the temporary path 
-              fs.unlinkSync(tempPath);
-              res.json({ success: true, data: uploadResponse });
-          })
-          .catch((error) => {
-              console.error(error);
-              res.status(500).json({ error: 'Error uploading the file to S3' });
-          });
-  });
-});
+    // Set up parameters for S3 upload
+    const uploadParams = {
+      Bucket: process.env.BUCKET_NAME, //bucket name original
+      Key: req.files.file.name,
+      Body: stream,
+    };
 
-// Endpoint to retrieve an object from S3
-app.get('/images/:objectKey', passport.authenticate('jwt', { session: false }), (req, res) => {
-  const objectKey = req.params.objectKey;
-  const bucketName = process.env.BUCKET_NAME; // Replace with the name of the bucket S3
+    // Create a new command for uploading to S3
+    const command = new PutObjectCommand(uploadParams);
 
-  const getObjectParams = {
-      Bucket: bucketName,
-      Key: objectKey,
-  };
+    try {
+      // Send the S3 upload command
+      const result = await s3Client.send(command);
 
-  const getObjectCmd = new GetObjectCommand(getObjectParams);
-
-  s3Client.send(getObjectCmd)
-      .then(({ Body }) => {
-          res.send(Body);
-      })
-      .catch((error) => {
-          console.error(error);
-          res.status(500).json({ error: 'Error to retrieve an object from S3' });
+      // Delete the temporary file from the server after uploading
+      fs.unlink(req.files.file.tempFilePath, (unlinkError) => {
+        if (unlinkError) {
+          console.error("Error deleting temporary file:", unlinkError);
+        } else {
+          console.log(
+            "Temporary file deleted successfully:",
+            req.files.file.tempFilePath
+          );
+        }
       });
+
+      // Return a success response with the S3 upload result
+      return res.json({
+        success: true,
+        message: "File uploaded successfully",
+        result,
+      });
+    } catch (error) {
+      // Handle errors during S3 upload
+      console.error("Error uploading file:", error);
+
+      // Return an error response
+      return res
+        .status(500)
+        .json({ success: false, message: "Internal server error" });
+    }
+  } catch (error) {
+    // Handle errors during the file upload process
+    console.error("Error uploading file:", error);
+
+    // Send a 500 Internal Server Error response
+    return res.status(500).send("Internal server error");
+  }
 });
+
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -505,8 +576,24 @@ app.use(express.static('public'));
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).send('Something broke!');
+  if (
+    err.name === "Error" &&
+    err.message ===
+      "The CORS policy for this application does not allow access from origin"
+  ) {
+    res.status(403); 
+  } else {
+    res.status(500);
+  }
+
+  // Config CORS headers
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
+  res.header("Access-Control-Allow-Headers", "Content-Type,Authorization");
+
+  res.send("Something broke!");
 });
+
 
 //-----------------------------------------------------------------------------------------
 const port = process.env.PORT || 8080;
